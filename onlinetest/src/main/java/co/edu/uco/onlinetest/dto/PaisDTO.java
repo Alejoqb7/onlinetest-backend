@@ -72,16 +72,7 @@ public class PaisDTO {
 		}
 
 		public PaisDTO crear() {
-			return new PaisDTO();
+			return new PaisDTO().builder(this);
 		}
-	}
-	
-	public static void main(String[] args) {
-	    var pais = (new PaisDTO.Builder()).id(UtilUUID.generarNuevoUUID()).nombre("Colombia").crear();
-	    var paisDos = (new PaisDTO.Builder()).nombre("Colombia").crear();
-	    var paisTres = (new PaisDTO.Builder()).crear();
-	    var paisCuatro = (new PaisDTO.Builder()).nombre("Colombia").id(UtilUUID.generarNuevoUUID()).crear();
-	}
-
 	}
 }

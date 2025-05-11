@@ -23,7 +23,7 @@ public class CiudadDTO {
 		setDepartamento(DepartamentoDTO.obtenerValorDefecto());
 	}
 
-	public CiudadDTO(final UUID id, final String nombre, final DepartamentoDTO pais) {
+	public CiudadDTO(final UUID id, final String nombre, final CiudadDTO ciudad) {
 		setId(id);
 		setNombre(nombre);
 		setDepartamento(departamento);
