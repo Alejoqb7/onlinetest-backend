@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import co.edu.uco.onlinetest.businesslogic.businesslogic.PaisBusinessLogic;
 import co.edu.uco.onlinetest.businesslogic.businesslogic.domain.PaisDomain;
+import co.edu.uco.onlinetest.crosscutting.excepciones.OnlineTestException;
 import co.edu.uco.onlinetest.data.dao.factory.DAOFactory;
 import co.edu.uco.onlinetest.entity.PaisEntity;
 
@@ -17,27 +18,27 @@ public class PaisBusinessLogicImpl implements PaisBusinessLogic {
 	}
 
 	@Override
-	public void registrarNuevoPais(PaisDomain pais) {
+	public void registrarNuevoPais(PaisDomain pais) throws OnlineTestException {
 		// TODO Auto-generated method stub
 		PaisEntity paisEntity = null; // Traductir de domain -> entity
 		factory.getPaisDAO().create(paisEntity);
 	}
 
 	@Override
-	public void modificarPaisExistente(UUID id, PaisDomain pais) {
+	public void modificarPaisExistente(UUID id, PaisDomain pais) throws OnlineTestException {
 		// TODO Auto-generated method stub
 		PaisEntity paisEntity = null; // Traductir de domain -> entity
 		factory.getPaisDAO().update(paisEntity, id);
 	}
 
 	@Override
-	public void darBajaDefinitivamentePaisExistente(UUID id) {
+	public void darBajaDefinitivamentePaisExistente(UUID id) throws OnlineTestException {
 		// TODO Auto-generated method stub
 		factory.getPaisDAO().delete(id);
 	}
 
 	@Override
-	public PaisDomain consultarPaisPorId(UUID id) {
+	public PaisDomain consultarPaisPorId(UUID id) throws OnlineTestException {
 		// TODO Auto-generated method stub
 
 		PaisEntity paisEntity = null;
@@ -47,7 +48,7 @@ public class PaisBusinessLogicImpl implements PaisBusinessLogic {
 	}
 
 	@Override
-	public List<PaisDomain> consultarPaises(PaisDomain filtro) {
+	public List<PaisDomain> consultarPaises(PaisDomain filtro) throws OnlineTestException {
 		// TODO Auto-generated method stub
 
 		PaisEntity paisFilter = null;
