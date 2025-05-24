@@ -56,6 +56,7 @@ public class PaisAzureSQLDAO implements PaisDAO {
 		
 		try(var sentenciaPreparada = conexion.prepareStatement(sentenciaSQL.toString())){
 			
+			Object id;
 			sentenciaPreparada.setObject(1, id);
 			
 			try(var cursorResultados = sentenciaPreparada.executeQuery()){
