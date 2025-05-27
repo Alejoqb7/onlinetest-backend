@@ -57,4 +57,9 @@ public class CiudadEntity {
 		var ciudad = new CiudadEntity();
 		System.out.println(ciudad.getDepartamento().getId());
 	}
+
+	public static Object obtenerValorDefecto() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

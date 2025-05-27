@@ -38,7 +38,7 @@ public final class PaisDomain {
 		return id;
 	}
 
-	private void setId(final UUID id) {
+	public void setId(final UUID id) {
 		this.id = UtilUUID.obtenerValorDefecto(id);
 	}
 

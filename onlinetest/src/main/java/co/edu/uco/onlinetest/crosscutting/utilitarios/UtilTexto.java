@@ -4,7 +4,7 @@ public final class UtilTexto {
 
 	private static UtilTexto instancia = new UtilTexto();
 	public static final String VACIO = "";
-	public final static String PATRON_SOLO_LETRAS_ESPACIOS = "^[a-zA-ZáÁéÉíÍóÓúÚñÑ]+$";
+	public final static String PATRON_SOLO_LETRAS_ESPACIOS = "^[a-zA-ZáÁéÉíÍóÓúÚñÑ ]+$";
 
 	private UtilTexto() {
 
@@ -45,5 +45,9 @@ public final class UtilTexto {
 
 	public String quitarEspaciosEnBlancoInicioFin(final String valor) {
 		return obtenerValorDefecto(valor).trim();	
-	}	
+	}
+	
+	public boolean esValorDefecto(final String valor) {
+		return obtenerValorDefecto(valor).equals(obtenerValorDefecto());
+	}
 }

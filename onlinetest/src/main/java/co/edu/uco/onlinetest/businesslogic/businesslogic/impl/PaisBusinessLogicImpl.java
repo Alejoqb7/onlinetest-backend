@@ -1,8 +1,9 @@
 package co.edu.uco.onlinetest.businesslogic.businesslogic.impl;
 
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import co.edu.uco.onlinetest.businesslogic.businesslogic.PaisBusinessLogic;
 import co.edu.uco.onlinetest.businesslogic.businesslogic.assembler.pais.entity.PaisEntityAssembler;
@@ -10,6 +11,7 @@ import co.edu.uco.onlinetest.businesslogic.businesslogic.domain.PaisDomain;
 import co.edu.uco.onlinetest.crosscutting.excepciones.BusinessLogicOnlineTestException;
 import co.edu.uco.onlinetest.crosscutting.excepciones.OnlineTestException;
 import co.edu.uco.onlinetest.crosscutting.utilitarios.UtilTexto;
+import co.edu.uco.onlinetest.crosscutting.utilitarios.UtilUUID;
 import co.edu.uco.onlinetest.data.dao.factory.DAOFactory;
 import co.edu.uco.onlinetest.entity.PaisEntity;
 
@@ -22,16 +24,55 @@ public class PaisBusinessLogicImpl implements PaisBusinessLogic {
     }
 
     @Override
-    public void registrarNuevoPais(PaisDomain pais) throws OnlineTestException {
+    public void registrarNuevoPais(PaisDomain pais) throws OnlineTestException, SQLException {	 
         validarIntegridadInformacionParaRegistrarNuevoPais(pais);
         validarIntegridadNombrePais(pais.getNombre());
         validarPaisConMismoNombre(pais.getNombre());
 
-        var paisEntity = PaisEntityAssembler.getInstance().toEntity(pais);
-        paisEntity.setId(generarIdentificadorNuevoPais()); // Assign generated ID
+        // Generar y asignar nuevo ID
+        UUID nuevoId = generarIdentificadorNuevoPais();
+        pais.setId(nuevoId);
+
+        // Traducir Domain -> Entity y crear
+        PaisEntity paisEntity = PaisEntityAssembler.getInstance().toEntity(pais);
         factory.getPaisDAO().create(paisEntity);
-        var id = generarIdentificadorNuevoPais();
-        var paisDomainCrear = new PaisDomain(id, pais.getNombre()); 
+    }
+
+    @Override
+    public void modificarPaisExistente(UUID id, PaisDomain pais) throws OnlineTestException {
+        validarIntegridadInformacionParaRegistrarNuevoPais(pais);
+        validarIntegridadNombrePais(pais.getNombre());
+
+        PaisEntity paisEntity = PaisEntityAssembler.getInstance().toEntity(pais);
+        factory.getPaisDAO().update(paisEntity, id);
+    }
+
+    @Override
+    public void darBajaDefinitivamentePaisExistente(UUID id) throws OnlineTestException {
+        factory.getPaisDAO().delete(id);
+    }
+
+    @Override
+    public PaisDomain consultarPaisPorId(UUID id) throws OnlineTestException, SQLException {
+        PaisEntity paisEntity = factory.getPaisDAO().listById(id);
+        if (paisEntity == null) {
+            return null;
+        }
+        return PaisEntityAssembler.getInstance().toDomain(paisEntity);
+    }
+
+    @Override
+    public List<PaisDomain> consultarPaises(PaisDomain filtro) throws OnlineTestException, SQLException {
+        PaisEntity entidadFiltro = PaisEntityAssembler.getInstance().toEntity(filtro);
+        List<PaisEntity> entidades = factory.getPaisDAO().listByFilter(entidadFiltro);
+
+        // Convertir manualmente cada entidad a dominio
+        List<PaisDomain> lista = new ArrayList<>();
+        for (PaisEntity e : entidades) {
+            PaisDomain d = PaisEntityAssembler.getInstance().toDomain(e);
+            lista.add(d);
+        }
+        return lista;
     }
 
     private void validarIntegridadInformacionParaRegistrarNuevoPais(PaisDomain pais) throws OnlineTestException {
@@ -60,75 +101,26 @@ public class PaisBusinessLogicImpl implements PaisBusinessLogic {
         }
     }
 
-    private void validarPaisConMismoNombre(String nombrePais) throws OnlineTestException {
-        var filtro = new PaisEntity();
+    private void validarPaisConMismoNombre(String nombrePais) throws OnlineTestException, SQLException {
+        PaisEntity filtro = new PaisEntity();
         filtro.setNombre(nombrePais);
 
-        var listaResultados = factory.getPaisDAO().listByFilter(filtro);
-
-        if (!listaResultados.isEmpty()) { // Corrected condition
+        List<PaisEntity> coincidencias = factory.getPaisDAO().listByFilter(filtro);
+        if (coincidencias != null && !coincidencias.isEmpty()) {
             throw BusinessLogicOnlineTestException.reportar(
-                "Ya existe un país registrado con el mismo nombre."
+                "Ya existe un país registrado con ese nombre."
             );
         }
     }
 
-    private UUID generarIdentificadorNuevoPais() throws OnlineTestException {
+    private UUID generarIdentificadorNuevoPais() throws OnlineTestException, SQLException {
         UUID nuevoId;
-        boolean existeId;
-
+        boolean existe;
         do {
-            nuevoId = UUID.randomUUID(); // Generate a new UUID
-            var pais = factory.getPaisDAO().listById(nuevoId);
-            existeId = pais != null; // Check if the ID already exists
-        } while (existeId);
-
+            nuevoId = UtilUUID.generarNuevoUUID();
+            PaisEntity existente = factory.getPaisDAO().listById(nuevoId);
+            existe = (existente != null && !UtilUUID.esValorDefecto(existente.getId()));
+        } while (existe);
         return nuevoId;
-    }
-
-    @Override
-    public void modificarPaisExistente(UUID id, PaisDomain pais) throws OnlineTestException {
-        validarIntegridadInformacionParaRegistrarNuevoPais(pais);
-        validarIntegridadNombrePais(pais.getNombre());
-        PaisEntity paisEntity = PaisEntityAssembler.getInstance().toEntity(pais);
-        factory.getPaisDAO().update(paisEntity, id);
-    }
-
-    @Override
-    public void darBajaDefinitivamentePaisExistente(UUID id) throws OnlineTestException {
-        factory.getPaisDAO().delete(id);
-    }
-
-    @Override
-    public PaisDomain consultarPaisPorId(UUID id) throws OnlineTestException {
-        PaisEntity paisEntity = factory.getPaisDAO().listById(id);
-        if (paisEntity == null) {
-            return null;
-        }
-        return PaisEntityAssembler.getInstance().toDomain(paisEntity);
-    }
-
-    @Override
-    public List<PaisDomain> consultarPaises(PaisDomain filtro) throws OnlineTestException {
-        PaisEntity filterEntity = PaisEntityAssembler.getInstance().toEntity(filtro);
-        List<PaisEntity> entidades = factory.getPaisDAO().listByFilter(filterEntity);
-        return entidades.stream()
-                        .map(PaisEntityAssembler.getInstance()::toDomain)
-                        .collect(Collectors.toList());
-    }
-
-    public boolean existePais(UUID id) throws OnlineTestException {
-        return factory.getPaisDAO().listById(id) != null;
-    }
-
-    public int contarPaises() throws OnlineTestException {
-        return factory.getPaisDAO().count();
-    }
-
-    public List<PaisDomain> consultarTodosLosPaises() throws OnlineTestException {
-        List<PaisEntity> entidades = factory.getPaisDAO().listAll();
-        return entidades.stream()
-                        .map(PaisEntityAssembler.getInstance()::toDomain)
-                        .collect(Collectors.toList());
     }
 }

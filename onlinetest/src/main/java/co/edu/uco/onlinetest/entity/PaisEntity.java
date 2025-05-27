@@ -10,10 +10,12 @@ public class PaisEntity {
 
 	private UUID id;
 	private String nombre;
+	private boolean objetoVacio;
 
 	public PaisEntity() {
 		setId(UtilUUID.obtenerValorDefecto());
 		setNombre(UtilTexto.getInstance().obtenerValorDefecto());
+		objetoVacio = true;
 	}
 
 	public PaisEntity(final UUID id) {
@@ -48,5 +50,13 @@ public class PaisEntity {
 
 	public void setNombre(final String nombre) {
 		this.nombre = UtilTexto.getInstance().quitarEspaciosEnBlancoInicioFin(nombre);
+	}
+
+	public boolean isObjetoVacio() {
+		return objetoVacio;
+	}
+
+	public boolean isObjetoDefecto() {
+		return UtilUUID.esValorDefecto(getId()) && UtilTexto.getInstance().esValorDefecto(getNombre());
 	}
 }

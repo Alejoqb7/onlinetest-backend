@@ -1,4 +1,4 @@
-package co.edu.uco.onlinetest.businesslogic.businesslogic.assembler.pais.dto;
+package co.edu.uco.onlinetest.businesslogic.businesslogic.assembler.departamento.dto;
 
 import java.util.List;
 
@@ -6,15 +6,15 @@ import co.edu.uco.onlinetest.businesslogic.businesslogic.assembler.DTOAssembler;
 import co.edu.uco.onlinetest.businesslogic.businesslogic.domain.PaisDomain;
 import co.edu.uco.onlinetest.dto.PaisDTO;
 
-public final class PaisDTOAssembler implements DTOAssembler<PaisDTO, PaisDomain> {
+public final class DepartamentoDTOAssembler implements DTOAssembler<PaisDTO, PaisDomain> {
 	
-	private static final PaisDTOAssembler INSTANCE = new PaisDTOAssembler();
+	private static final DepartamentoDTOAssembler INSTANCE = new DepartamentoDTOAssembler();
 	
-	private PaisDTOAssembler() {
+	private DepartamentoDTOAssembler() {
 		super();
 	}
 	
-	public static PaisDTOAssembler getInstance() {
+	public static DepartamentoDTOAssembler getInstance() {
 		return INSTANCE;
 	}
 	

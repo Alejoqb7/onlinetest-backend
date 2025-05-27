@@ -12,7 +12,7 @@ public class DepartamentoAzureSQLDAO implements DepartamentoDAO {
 	private Connection conexion;
 	
 	public DepartamentoAzureSQLDAO(Connection conexion) {
-		this.conexion = conexion;
+		this.setConexion(conexion);
 	}
 
 	@Override
@@ -48,5 +48,13 @@ public class DepartamentoAzureSQLDAO implements DepartamentoDAO {
 	public void update(DepartamentoEntity id, UUID entity) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	public Connection getConexion() {
+		return conexion;
+	}
+
+	public void setConexion(Connection conexion) {
+		this.conexion = conexion;
 	}
 }

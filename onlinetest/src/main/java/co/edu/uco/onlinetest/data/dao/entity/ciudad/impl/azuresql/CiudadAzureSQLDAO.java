@@ -43,4 +43,8 @@ public class CiudadAzureSQLDAO implements CiudadDAO {
 		// TODO Auto-generated method stub
 		
 	}
+
+	public Connection getConexion() {
+		return conexion;
+	}
 }
